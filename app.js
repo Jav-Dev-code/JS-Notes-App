@@ -103,6 +103,8 @@ function searchPDF() {
 }
 // app.js - Using IndexedDB for PDF Storage
 
+// app.js - Store PDFs in Project Directory Instead of IndexedDB
+
 let db;
 const request = indexedDB.open("pdfDatabase", 1);
 
@@ -110,6 +112,7 @@ request.onupgradeneeded = function(event) {
     let db = event.target.result;
     let objectStore = db.createObjectStore("pdfs", { keyPath: "id", autoIncrement: true });
     objectStore.createIndex("title", "title", { unique: false });
+    objectStore.createIndex("fileName", "fileName", { unique: false });
 };
 
 request.onsuccess = function(event) {
@@ -131,22 +134,17 @@ function addPDF() {
     }
     
     const file = fileInput.files[0];
-    const reader = new FileReader();
+    const fileName = file.name;
     
-    reader.onload = function(event) {
-        const fileData = event.target.result;
-        const transaction = db.transaction(["pdfs"], "readwrite");
-        const objectStore = transaction.objectStore("pdfs");
-        
-        objectStore.add({ title, fileData });
-        transaction.oncomplete = function() {
-            displayPDFs();
-            document.getElementById("pdfTitle").value = "";
-            document.getElementById("pdfFile").value = "";
-        };
+    const transaction = db.transaction(["pdfs"], "readwrite");
+    const objectStore = transaction.objectStore("pdfs");
+    
+    objectStore.add({ title, fileName });
+    transaction.oncomplete = function() {
+        displayPDFs();
+        document.getElementById("pdfTitle").value = "";
+        document.getElementById("pdfFile").value = "";
     };
-    
-    reader.readAsDataURL(file);
 }
 
 function displayPDFs() {
@@ -163,7 +161,7 @@ function displayPDFs() {
             const li = document.createElement("li");
             li.innerHTML = `
                 <span>${cursor.value.title}</span>
-                <a href="${cursor.value.fileData}" download="${cursor.value.title}.pdf" class="btn primary">Download</a>
+                <a href="pdfs/${cursor.value.fileName}" download="${cursor.value.title}.pdf" class="btn primary">Download</a>
                 <button class="btn delete-btn" onclick="deletePDF(${cursor.key})">Delete</button>
             `;
             list.appendChild(li);
@@ -184,4 +182,3 @@ function deletePDF(id) {
 function logout() {
     window.location.href = "index.html";
 }
-
