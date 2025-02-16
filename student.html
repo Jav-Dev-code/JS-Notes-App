@@ -1,0 +1,23 @@
+<!-- student.html (Student Portal) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Student Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+        <h3>Search PDF Notes</h3>
+        <input type="text" id="searchInput" placeholder="Search PDF">
+        <button onclick="searchPDF()">Search</button>
+        <h3>Available PDFs</h3>
+        <ul id="pdfList"></ul>
+    </div>
+    <script src="app.js"></script>
+    <script>displayPDFs();</script>
+</body>
+</html>

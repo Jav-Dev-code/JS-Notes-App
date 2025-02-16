@@ -1,0 +1,24 @@
+<!-- admin.html (Admin Portal) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Admin Dashboard</h2>
+        <button onclick="logout()">Logout</button>
+        <h3>Add PDF Note</h3>
+        <input type="text" id="pdfTitle" placeholder="PDF Title">
+        <input type="file" id="pdfFile" accept="application/pdf">
+        <button onclick="addPDF()">Upload PDF</button>
+        <h3>Manage PDFs</h3>
+        <ul id="pdfList"></ul>
+    </div>
+    <script src="app.js"></script>
+    <script>displayPDFs();</script>
+</body>
+</html>

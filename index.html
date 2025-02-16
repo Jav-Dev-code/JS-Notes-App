@@ -1,0 +1,27 @@
+<!-- index.html (Login & Signup) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Signup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <h3>Signup</h3>
+        <input type="text" id="signupUsername" placeholder="Username">
+        <input type="password" id="signupPassword" placeholder="Password">
+        <select id="signupRole">
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button onclick="signUp()">Sign Up</button>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
