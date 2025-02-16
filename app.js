@@ -101,3 +101,87 @@ function searchPDF() {
         pdfList.appendChild(li);
     });
 }
+// app.js - Using IndexedDB for PDF Storage
+
+let db;
+const request = indexedDB.open("pdfDatabase", 1);
+
+request.onupgradeneeded = function(event) {
+    let db = event.target.result;
+    let objectStore = db.createObjectStore("pdfs", { keyPath: "id", autoIncrement: true });
+    objectStore.createIndex("title", "title", { unique: false });
+};
+
+request.onsuccess = function(event) {
+    db = event.target.result;
+    displayPDFs();
+};
+
+request.onerror = function(event) {
+    console.error("IndexedDB error: ", event.target.errorCode);
+};
+
+function addPDF() {
+    const title = document.getElementById("pdfTitle").value;
+    const fileInput = document.getElementById("pdfFile");
+    
+    if (!title || fileInput.files.length === 0) {
+        alert("Please enter a title and select a PDF file.");
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(event) {
+        const fileData = event.target.result;
+        const transaction = db.transaction(["pdfs"], "readwrite");
+        const objectStore = transaction.objectStore("pdfs");
+        
+        objectStore.add({ title, fileData });
+        transaction.oncomplete = function() {
+            displayPDFs();
+            document.getElementById("pdfTitle").value = "";
+            document.getElementById("pdfFile").value = "";
+        };
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+function displayPDFs() {
+    const list = document.getElementById("pdfList");
+    list.innerHTML = "";
+    
+    const transaction = db.transaction(["pdfs"], "readonly");
+    const objectStore = transaction.objectStore("pdfs");
+    const request = objectStore.openCursor();
+    
+    request.onsuccess = function(event) {
+        const cursor = event.target.result;
+        if (cursor) {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span>${cursor.value.title}</span>
+                <a href="${cursor.value.fileData}" download="${cursor.value.title}.pdf" class="btn primary">Download</a>
+                <button class="btn delete-btn" onclick="deletePDF(${cursor.key})">Delete</button>
+            `;
+            list.appendChild(li);
+            cursor.continue();
+        }
+    };
+}
+
+function deletePDF(id) {
+    const transaction = db.transaction(["pdfs"], "readwrite");
+    const objectStore = transaction.objectStore("pdfs");
+    objectStore.delete(id);
+    transaction.oncomplete = function() {
+        displayPDFs();
+    };
+}
+
+function logout() {
+    window.location.href = "index.html";
+}
+
